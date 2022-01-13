@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "bd47f32b-1d08-4810-96bf-cc770d6ddb17": {
+      "ProjectGuid": "bd47f32b-1d08-4810-96bf-cc770d6ddb17",
+      "DisplayName": "MinimalJwt",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
