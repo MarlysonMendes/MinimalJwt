@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MinimalJwt.DbAccess;
+using MinimalJwt.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,50 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGet("/api/movie", async (MinimalJwtContext ctx) => {
+    return await ctx.Movies.ToListAsync();
+});
+
+app.MapPost("/api/movie", async(MinimalJwtContext ctx, MovieDto movieDto) =>{
+
+    var movie = new Movie();
+    movie.Title = movieDto.Title;
+    movie.Description = movieDto.Description;
+    movie.Rating = movieDto.Rating;
+
+    ctx.Movies.Add(movie);
+    await  ctx.SaveChangesAsync();
+    return movie;
+});
+
+app.MapPut("/api/movie/{id}", async (int id, MinimalJwtContext ctx, MovieDto movieDto)=>{
+
+    var movie = await ctx.Movies.FindAsync(id);
+
+    if (movie is null) return Results.NotFound();
+
+    movie.Title = movieDto.Title;
+    movie.Description=movieDto.Description;
+    movie.Rating=movieDto.Rating;
+
+    await ctx.SaveChangesAsync();
+    return Results.NoContent();
+
+});
+
+app.MapDelete("/api/movie/{id}", async (int id, MinimalJwtContext ctx) => {
+
+    if (await ctx.Movies.FindAsync(id) is Movie movie)
+    {
+        ctx.Movies.Remove(movie);
+        await ctx.SaveChangesAsync();
+        return Results.Ok();
+    }
+    return Results.NotFound();
+
+});
 
 
 app.Run();
+
+internal record MovieDto(string Title, string Description, double Rating);
